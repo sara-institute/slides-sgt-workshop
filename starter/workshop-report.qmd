@@ -1,0 +1,53 @@
+---
+title: "My first reproducible report"
+author: "Your name"
+format:
+  html:
+    embed-resources: true
+---
+
+## About my research
+
+<!-- HANDS-ON 2: write about 150 words about your research here.
+     Try **bold**, *italics*, a list, and a link. -->
+
+## Setup
+
+```{r}
+#| message: false
+library(gapminder)
+library(dplyr)
+library(ggplot2)
+```
+
+## The data
+
+<!-- HANDS-ON 3a: show the first rows of gapminder with head() -->
+
+```{r}
+
+```
+
+## India in 2007
+
+<!-- HANDS-ON 3b: keep only India in 2007 with filter() -->
+
+```{r}
+
+```
+
+## Life expectancy over time
+
+<!-- HANDS-ON 3c: draw a line chart of lifeExp against year for 3-4 countries -->
+
+```{r}
+#| echo: false
+#| fig-cap: "Life expectancy, 1952-2007"
+
+```
+
+## What I found
+
+<!-- HANDS-ON 4: write two sentences interpreting the chart.
+     Put one number from the data inside your sentence using inline code.
+     Add one citation, e.g. [@koli2021], after you create references.bib. -->

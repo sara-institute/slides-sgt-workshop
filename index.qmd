@@ -1,0 +1,470 @@
+---
+title: "Reproducible Research using Quarto & Github"
+author: "[Digital Humanities Bootcamp Nov. 28, 2026<br>School of Humanities, Social Sciences, & Liberal Arts - SGT University]{.r-fit-text .muted}"
+subtitle: "**Dr. Ajay Kumar Koli** | [{{< fa brands linkedin >}}](https://www.linkedin.com/in/ajay-kumar-koli/)"
+format:
+  revealjs:
+    theme: [default, custom.scss]
+    slide-number: true
+    logo: "images/logo-sgtu.jpg"
+    embed-resources: true
+    code-copy: true
+    transition: slide
+execute:
+  echo: true
+filter:
+  - roughnotation
+title-slide-attributes:
+  data-background-image: "https://images.unsplash.com/vector-1788611171824-d67069456cef?q=80&w=1800&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=NHwxMjA3fDA%3D"
+  data-background-size: cover
+#  data-background-opacity: "0.2"
+#   data-background-color: "black"
+bibliography: references.bib
+---
+
+## Setup Check {.handson}
+
+(@) [R](https://www.r-project.org/) & [RStudio](https://posit.co/downloads) are installed
+
+(@) Open RStudio
+
+(@) In the Console, type this and press Enter:
+
+```r
+R.version.string
+```
+
+(@) Install this workshop's packages (once):
+
+```r
+install.packages(c("tidyverse", "gapminder"))
+```
+
+(@) Open the **Terminal** tab and type `quarto --version`
+
+::: {.callout-box}
+Stuck? Raise your hand.
+:::
+
+# Why reproducibility? {.dark background-color="#1f4e9c"}
+
+## A familiar story
+
+:::: {.columns}
+
+::: {.column width="60%"}
+::: {.fragment .fade-in-then-semi-out}
+`paper_final.docx`\
+`paper_final_v2.docx`\
+`paper_FINAL_really.docx`\
+`paper_FINAL_really_Ajay.docx`
+:::
+:::
+
+::: {.column width="40%" .fragment}
+
+- Which data file made *this* table?
+- Who typed *this* number into Word?
+- What did we change after the reviewer's comments?
+- Can I redo it in six months?
+:::
+
+::::
+
+## When it goes wrong
+
+- In 2010, an influential economics paper on public debt was cited in policy debates about austerity
+- In 2013, **a graduate student** tried to repeat the analysis and found a spreadsheet error
+- The result was only found because the calculation could be re-run and inspected
+
+::: {.callout-box}
+Reproducibility is not about distrust. It lets others, and **future you**, see exactly how a number was produced.
+:::
+
+::: footer
+Read more <https://www.bbc.com/news/magazine-22223190>
+:::
+
+## What do we mean?
+
+> **Reproducible:** same data + same code = same results, and anyone can re-run it.
+
+- Not "trust me": **show me**, and let me run it
+- Works for numbers, tables, charts and the text around them
+- It is a habit, not a special tool
+
+## Our goal today
+
+::: {.flow}
+::: {.stack}
+::: {.box}
+Data
+:::
+::: {.box}
+Text
+:::
+::: {.box}
+Code
+:::
+:::
+::: {.arrow}
+→
+:::
+::: {.box}
+**one `.qmd` file**
+:::
+::: {.arrow}
+→
+:::
+::: {.stack}
+::: {.box}
+HTML report
+:::
+::: {.box}
+Word / PDF
+:::
+::: {.box}
+Slides
+:::
+:::
+:::
+
+<br>
+
+*These very slides are made this way.*
+
+# Meet RStudio & Quarto {.dark background-color="#1f4e9c"}
+
+## RStudio has four panes
+
+<br>
+
+::: {.panes}
+::: {}
+**Source**\
+where you write your document
+:::
+::: {}
+**Environment**\
+objects R is holding in memory
+:::
+::: {}
+**Console**\
+where R runs commands and answers
+:::
+::: {}
+**Files / Plots / Help**\
+your folders, charts and help pages
+:::
+:::
+
+## What is a `.qmd` file?
+
+````markdown
+---
+title: "My report"
+format: html
+---
+
+## Introduction
+
+This is **text** written in Markdown.
+
+```{{r}}
+2 + 2
+```
+````
+
+Three parts: the **header** (between `---`), the **text**, and **code chunks**.
+
+## Your first render {.handson}
+
+1. **File → Open File…** and open `workshop-report.qmd`
+2. Click **Render** (the blue arrow)
+3. Look at the preview that appears
+4. Change the **title**, then render again
+
+<br>
+
+::: {.callout-box}
+You just made a document from a plain-text file. That is the whole idea.
+:::
+
+# Writing in Markdown {.dark background-color="#1f4e9c"}
+
+## Markdown in five minutes
+
+<br>
+
+| You type | You get |
+|---|---|
+| `## Heading` | a section heading |
+| `**bold**` and `*italic*` | **bold** and *italic* |
+| `- item` | a bullet list |
+| `1. item` | a numbered list |
+| `[text](https://quarto.org)` | a link |
+| `![caption](photo.png)` | an image |
+
+## The header controls everything
+
+```yaml
+---
+title: "My first reproducible report"
+author: "Your name"
+format:
+  html:
+    embed-resources: true
+---
+```
+
+<br>
+
+Change `html` to `docx` and render again: **same content, new format.**
+
+## Write about your research {.handson}
+
+1. Under **About my research**, write about 150 words
+2. Use at least one **bold** word, one list and one link
+3. Render to **HTML**
+4. Change `html` to `docx` and render to **Word**
+
+# R without Fear {.dark background-color="#1f4e9c"}
+
+## Code chunks
+
+Code lives in **chunks**. Click ▶ (or Ctrl/Cmd + Enter) to run.
+
+```{r}
+# add two numbers is a comment
+2 + 2
+```
+
+```{r}
+x <- 5
+x * 3
+```
+
+- `<-` means "store this under a name"
+- Lines starting with `#` are comments for humans
+
+## Our data: Gapminder
+
+```{r}
+#| message: false
+library(gapminder)
+head(gapminder, 5)
+```
+
+One row per country per year: **life expectancy**, **population** and **GDP per capita**.
+
+::: footer
+
+Know more about `gapminder` <https://jennybc.github.io/gapminder/articles/gapminder.html>
+
+:::
+
+## Keep only what you need
+
+```{r}
+#| message: false
+library(dplyr)
+filter(gapminder, country == "India", year == 2007)
+```
+
+`filter()` keeps rows. Read it aloud: *"from gapminder, keep India in 2007"*.
+
+## A first chart
+
+```{r}
+#| fig-height: 4.2
+#| fig-width: 9
+library(ggplot2)
+four <- filter(gapminder,
+               country %in% c("India", "China", "Bangladesh", "Pakistan"))
+ggplot(four, aes(x = year, y = lifeExp, colour = country)) +
+  geom_line(linewidth = 1.2) +
+  labs(title = "Life expectancy, 1952–2007", x = NULL, y = "Years") +
+  theme_minimal(base_size = 16)
+```
+
+## Errors are normal
+
+::: {.callout-box}
+Everyone sees red text. Read the **last line** first.
+:::
+
+<br>
+
+| You see | Usually means |
+|---|---|
+| `unexpected symbol` | a missing quote, comma or bracket |
+| `object 'x' not found` | a typo in a name |
+| `there is no package called` | run `install.packages("name")` |
+
+## Table and chart {.handson}
+
+In `workshop-report.qmd`, fill in the three empty chunks:
+
+1. `head(gapminder, 5)`
+2. `filter(gapminder, country == "India", year == 2007)`
+3. A line chart for **three or four countries you choose**
+
+Render after each step.
+
+# From Analysis to Report {.dark background-color="#1f4e9c"}
+
+## Show the result, hide the code
+
+```{r}
+#| echo: false
+#| fig-cap: "Life expectancy in four South Asian and East Asian countries, 1952–2007."
+#| fig-height: 3.6
+#| fig-width: 9
+ggplot(four, aes(x = year, y = lifeExp, colour = country)) +
+  geom_line(linewidth = 1.2) +
+  labs(x = NULL, y = "Years") +
+  theme_minimal(base_size = 16)
+```
+
+Chunk options start with `#|`: `echo: false` hides code, `fig-cap` adds a caption.
+
+## Numbers that update themselves
+
+Write this in your text:
+
+```{r}
+#| echo: false
+#| results: asis
+cat("````markdown\nIn 2007, life expectancy in India was `r round(india$lifeExp, 1)` years.\n````")
+```
+
+```{r}
+#| echo: false
+india <- filter(gapminder, country == "India", year == 2002)
+```
+
+Result: *In 2007, life expectancy in India was **`r round(india$lifeExp, 1)`** years.*
+
+Change the data, render again, and the sentence **fixes itself**.
+
+## Citations
+
+1. Save references in `references.bib`
+2. Point to it in the header: `bibliography: references.bib`
+3. Cite in text: `[@koli2021]`
+
+<br>
+
+Quarto builds the reference list for you, in the style you choose.
+
+## One source, many formats
+
+```yaml
+format:
+  html: default
+  docx: default
+  pdf: default
+```
+
+<br>
+
+Same file. Reviewers get Word, readers get HTML, you keep **one** source of truth.
+
+::: {.small .muted}
+PDF needs a LaTeX or Typst setup; skip it today if it is not installed. Open **terminal** and try `quarto install tinytex`
+:::
+
+## Add the finishing touches {.handson}
+
+1. Write **two sentences** interpreting your chart
+2. Put **one number** from the data inside them with inline code
+3. Copy `references.bib` into your folder, add `bibliography: references.bib` to the header, and cite `[@koli2021]`
+4. Hide the code in your chart chunk and add a **caption**
+5. Render
+
+# GitHub in plain words {.dark background-color="#1f4e9c"}
+
+## Git and GitHub, by analogy
+
+| In Word | In Git / GitHub |
+|---|---|
+| Track Changes | **commit**: a saved snapshot with a note |
+| `final_v2.docx` | **history**: every version, automatically |
+| Shared folder | **repository**: your project, online |
+| Email attachment | **GitHub**: a link anyone can open |
+
+<br>
+
+A commit message says *why*: "Add life expectancy chart".
+
+## A tidy project folder
+
+```text
+my-first-report/
+├── index.qmd          # the document
+├── references.bib     # citations
+├── data/              # raw data, never edited by hand
+└── README.md          # how to run it
+```
+
+<br>
+
+- Use **relative paths** (`data/file.csv`), never `C:/Users/...`
+- No spaces in names: `life-expectancy.csv`
+
+## Put your project on GitHub {.handson}
+
+1. Go to **github.com**, sign in, click **New repository**
+2. Name it `my-first-report`, choose **Public**, tick **Add a README**, click **Create**
+3. **Add file → Upload files**, drop in your project files, click **Commit changes**
+4. Click `index.qmd` → pencil icon ✎ → change the title → **Commit changes**
+5. Open the **History** (clock icon) and see both commits
+
+::: {.notes}
+Rename workshop-report.qmd to index.qmd before uploading. Most problems today: not signed in, forgot to tick the README, and uploading a folder inside a folder. No terminal needed.
+:::
+
+# Publish and share {.dark background-color="#1f4e9c"}
+
+## Get a public link {.handson}
+
+1. Render `index.qmd` with `embed-resources: true` so it becomes **one file**: `index.html`
+2. In your repository: **Add file → Upload files**, add `index.html`, commit
+3. **Settings → Pages**
+4. Source: **Deploy from a branch** → `main` → `/ (root)` → **Save**
+5. After 1 to 2 minutes your page is at `https://USERNAME.github.io/my-first-report/`
+
+Open the link on your phone.
+
+::: {.notes}
+Pages needs a public repository on a free account. If the link shows 404, wait another minute and refresh. Celebrate when the first link works.
+:::
+
+## Reproducibility checklist
+
+- ☐ Raw data kept untouched in `data/`
+- ☐ Every step is in code, not mouse clicks
+- ☐ One file rebuilds the whole report
+- ☐ Relative paths only
+- ☐ Packages noted (try `sessionInfo()` at the end)
+- ☐ A README says how to run it
+- ☐ History saved on GitHub with clear messages
+
+## Where to go next
+
+- **Quarto guide:** <http://quarto.org/docs/guide>
+- **R for Data Science (2e):** <http://r4ds.hadley.nz>
+- **Happy Git with R:** <http://happygitwithr.com>
+- **ggplot2:** <http://ggplot2.tidyverse.org>
+
+::: {.small .muted}
+
+:::
+
+# Thank you {background-image="images/qr-sara.jpeg" background-position=right background-size=contain}
+
+**Reproducibility is a habit.**
+
+Start with one document, one folder, one commit.
+
+Questions?
